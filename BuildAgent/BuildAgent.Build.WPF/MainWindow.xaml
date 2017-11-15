@@ -1,0 +1,65 @@
+﻿<Window x:Class="BuildAgent.Build.WPF.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:build="clr-namespace:BuildAgent.Build.FullFramework;assembly=BuildAgent.Build.FullFramework"
+        xmlns:local="clr-namespace:BuildAgent.Build.WPF"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="350" Width="525">
+  <Window.DataContext>
+    <local:ViewModel/>
+  </Window.DataContext>
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="48"/>
+      <RowDefinition Height="48"/>
+      <RowDefinition Height="48"/>
+      <RowDefinition Height="*"/>
+      <RowDefinition Height="48"/>
+    </Grid.RowDefinitions>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="Auto"/>
+      <ColumnDefinition Width="*"/>
+    </Grid.ColumnDefinitions>
+    <TextBlock FontSize="36" 
+               Grid.Column="0"
+               FontWeight="ExtraLight" 
+               Grid.Row="0"
+               Text="{Binding Duration, StringFormat={}{0}s}"/>
+    <ComboBox Grid.Column="1" HorizontalAlignment="Stretch" Margin="30,0,0,0" Height="48" FontSize="16" FontWeight="ExtraLight" SelectedItem="{Binding SelectedSolution, Mode=OneWayToSource}"  ItemsSource="{Binding SolutionFileList}"/>
+    <ListBox Height="48" Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{x:Static build:Build.Configuration}" SelectedIndex="0" SelectedItem="{Binding SelectedConfiguration}">
+      <ListBox.ItemsPanel>
+        <ItemsPanelTemplate>
+          <StackPanel Orientation="Horizontal"/>
+        </ItemsPanelTemplate>
+      </ListBox.ItemsPanel>
+    </ListBox>
+    <ListBox Height="48" Grid.Row="2" Grid.ColumnSpan="2" ItemsSource="{x:Static build:Build.Platform}" SelectedIndex="0" SelectionMode="Single" SelectedItem="{Binding SelectedPlatform}">
+      <ListBox.ItemsPanel>
+        <ItemsPanelTemplate>
+          <StackPanel Orientation="Horizontal"/>
+        </ItemsPanelTemplate>
+      </ListBox.ItemsPanel>
+    </ListBox>
+
+    <Button Content="Build" 
+            IsEnabled="True"
+            Grid.Column="0"
+            FontWeight="ExtraLight" 
+            HorizontalAlignment="Left" 
+            VerticalAlignment="Bottom" 
+            Grid.Row="4"
+            FontSize="36" 
+            Command="{Binding StartBuildCommand}"/>
+    <TextBlock FontSize="36" 
+               FontWeight="ExtraLight" 
+               Grid.Row="4"
+               Grid.Column="1"
+               HorizontalAlignment="Right" 
+               Text="{Binding Status}"/>
+    <ScrollViewer Grid.Row="3" Grid.ColumnSpan="2" HorizontalScrollBarVisibility="Auto">
+      <TextBlock Text="{Binding LogText}" Foreground="White" Background="DarkSlateGray" FontFamily="Consolas"/>
+    </ScrollViewer>
+  </Grid>
+</Window>
