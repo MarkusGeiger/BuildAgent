@@ -6,7 +6,10 @@
         xmlns:build="clr-namespace:BuildAgent.Build.FullFramework;assembly=BuildAgent.Build.FullFramework"
         xmlns:local="clr-namespace:BuildAgent.Build.WPF"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        Title="MainWindow" 
+        SizeToContent="WidthAndHeight"
+        MinHeight="450"
+        MinWidth="360">
   <Window.DataContext>
     <local:ViewModel/>
   </Window.DataContext>
@@ -19,7 +22,7 @@
       <RowDefinition Height="48"/>
     </Grid.RowDefinitions>
     <Grid.ColumnDefinitions>
-      <ColumnDefinition Width="Auto"/>
+      <ColumnDefinition Width="180"/>
       <ColumnDefinition Width="*"/>
     </Grid.ColumnDefinitions>
     <TextBlock FontSize="36" 
@@ -27,39 +30,68 @@
                FontWeight="ExtraLight" 
                Grid.Row="0"
                Text="{Binding Duration, StringFormat={}{0}s}"/>
-    <ComboBox Grid.Column="1" HorizontalAlignment="Stretch" Margin="30,0,0,0" Height="48" FontSize="16" FontWeight="ExtraLight" SelectedItem="{Binding SelectedSolution, Mode=OneWayToSource}"  ItemsSource="{Binding SolutionFileList}"/>
-    <ListBox Height="48" Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{x:Static build:Build.Configuration}" SelectedIndex="0" SelectedItem="{Binding SelectedConfiguration}">
-      <ListBox.ItemsPanel>
-        <ItemsPanelTemplate>
-          <StackPanel Orientation="Horizontal"/>
-        </ItemsPanelTemplate>
-      </ListBox.ItemsPanel>
+    <ComboBox Grid.Column="1" 
+              HorizontalAlignment="Stretch" 
+              Height="48" 
+              FontSize="16" 
+              FontWeight="ExtraLight" 
+              SelectedItem="{Binding SelectedSolution, Mode=TwoWay}" 
+              ItemsSource="{Binding SolutionFileList}"/>
+    <ListBox Height="48" 
+             Grid.Row="1" 
+             Grid.ColumnSpan="2" 
+             ItemsSource="{x:Static build:Build.Configurations}" 
+             SelectedItem="{Binding SelectedConfiguration}">
+      <ListBox.Template>
+        <ControlTemplate TargetType="{x:Type ListBox}">
+          <UniformGrid Rows="1" 
+                       IsItemsHost="True"/>
+        </ControlTemplate>
+      </ListBox.Template>
     </ListBox>
-    <ListBox Height="48" Grid.Row="2" Grid.ColumnSpan="2" ItemsSource="{x:Static build:Build.Platform}" SelectedIndex="0" SelectionMode="Single" SelectedItem="{Binding SelectedPlatform}">
-      <ListBox.ItemsPanel>
-        <ItemsPanelTemplate>
-          <StackPanel Orientation="Horizontal"/>
-        </ItemsPanelTemplate>
-      </ListBox.ItemsPanel>
+    <ListBox Height="48" 
+             Grid.Row="2" 
+             Grid.ColumnSpan="2" 
+             ItemsSource="{x:Static build:Build.Platforms}" 
+             SelectedItem="{Binding SelectedPlatform}">
+      <ListBox.Template>
+        <ControlTemplate TargetType="{x:Type ListBox}">
+          <UniformGrid Rows="1" 
+                       IsItemsHost="True"/>
+        </ControlTemplate>
+      </ListBox.Template>
     </ListBox>
 
     <Button Content="Build" 
             IsEnabled="True"
-            Grid.Column="0"
             FontWeight="ExtraLight" 
             HorizontalAlignment="Left" 
             VerticalAlignment="Bottom" 
             Grid.Row="4"
+            Grid.ColumnSpan="2"
             FontSize="36" 
             Command="{Binding StartBuildCommand}"/>
     <TextBlock FontSize="36" 
                FontWeight="ExtraLight" 
                Grid.Row="4"
-               Grid.Column="1"
+               Grid.ColumnSpan="2"
                HorizontalAlignment="Right" 
                Text="{Binding Status}"/>
-    <ScrollViewer Grid.Row="3" Grid.ColumnSpan="2" HorizontalScrollBarVisibility="Auto">
-      <TextBlock Text="{Binding LogText}" Foreground="White" Background="DarkSlateGray" FontFamily="Consolas"/>
-    </ScrollViewer>
+    <ListBox Grid.Row="3"
+             Grid.ColumnSpan="2"
+             IsSynchronizedWithCurrentItem="True"
+             local:ListBoxExtenders.AutoScrollToCurrentItem="True"
+             ScrollViewer.HorizontalScrollBarVisibility="Auto"
+             ItemsSource="{Binding LogText}">
+      
+    </ListBox>
+    <!--<ScrollViewer Grid.Row="3" 
+                  Grid.ColumnSpan="2" 
+                  HorizontalScrollBarVisibility="Auto">
+      <TextBlock Text="{Binding LogText}" 
+                 Foreground="White" 
+                 Background="DarkSlateGray" 
+                 FontFamily="Consolas"/>
+    </ScrollViewer>-->
   </Grid>
 </Window>

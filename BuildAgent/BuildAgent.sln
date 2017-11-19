@@ -7,11 +7,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BuildAgent", "BuildAgent\Bu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BuildAgent.Tests", "BuildAgent.Tests\BuildAgent.Tests.csproj", "{C819F13F-FB20-422B-A5BE-D5D7D003F0C9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BuildAgent.Build.Standard", "BuildAgent.Build.Standard\BuildAgent.Build.Standard.csproj", "{6A2813B7-303C-4654-8A25-47050C4EDE8E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BuildAgent.Build.Standard", "BuildAgent.Build.Standard\BuildAgent.Build.Standard.csproj", "{6A2813B7-303C-4654-8A25-47050C4EDE8E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BuildAgent.Build.FullFramework", "BuildAgent.Build.FullFramework\BuildAgent.Build.FullFramework.csproj", "{AFDFA86B-F3F4-4AB1-BE8D-85A4A6F348E0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BuildAgent.Build.WPF", "BuildAgent.Build.WPF\BuildAgent.Build.WPF.csproj", "{16AA8E84-3226-4597-84B5-411FB575C5F2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BuildAgent.Config", "BuildAgent.Config\BuildAgent.Config.csproj", "{665830E2-9789-4F98-AD0D-C0D974A9E96A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{16AA8E84-3226-4597-84B5-411FB575C5F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{16AA8E84-3226-4597-84B5-411FB575C5F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{16AA8E84-3226-4597-84B5-411FB575C5F2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{665830E2-9789-4F98-AD0D-C0D974A9E96A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{665830E2-9789-4F98-AD0D-C0D974A9E96A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{665830E2-9789-4F98-AD0D-C0D974A9E96A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{665830E2-9789-4F98-AD0D-C0D974A9E96A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

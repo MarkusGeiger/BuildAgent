@@ -10,53 +10,96 @@ namespace BuildAgent.Build.FullFramework
 {
   public class Build
   {
-    public static readonly List<string> Platform = new List<string>(new[]{ "Any CPU" ,"x86","x64"});
-    public static readonly List<string> Configuration = new List<string>(new[] { "Debug", "Release" });
-    public Build()
+    #region Constants
+    public static readonly List<string> Platforms = new List<string> { Platform.AnyCPU, Platform.x86, Platform.x64 };
+    public class Platform
     {
-      AvailableSolutionFiles = Directory.GetFileSystemEntries(@"C:\Users\marku\source\repos", "*.sln", SearchOption.AllDirectories);
+      public const string AnyCPU = "Any CPU";
+      public const string x86 = "x86";
+      public const string x64 = "x64";
+    }
+
+    public static readonly List<string> Configurations = new List<string> { Configuration.Debug, Configuration.Release };
+    public class Configuration
+    {
+      public const string Debug = "Debug";
+      public const string Release = "Release";
+    }
+
+    public static readonly List<string> BuildTargets = new List<string> { "Build", "Clean" };
+    public class BuildTarget
+    {
+      public const string Build = "Build";
+      public const string Clean = "Clean";
+    }
+
+    public const string SOLUTION_EXTENSION = "*.sln";
+
+    #endregion Constants
+
+    public Build(string path = null)
+    {
+      StartupDir = Environment.CurrentDirectory;
+      var solutionDirectory = path ?? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "source");
+      AvailableSolutionFiles = Directory.GetFileSystemEntries(solutionDirectory, SOLUTION_EXTENSION, SearchOption.AllDirectories);
     }
 
     public string[] AvailableSolutionFiles { get; private set; }
+    public string StartupDir { get; set; }
 
-    public void RunNonBlocking(string selectedSolution, string selectedPlatform, string selectedConfiguration, Action<string> buildLogAction, Action buildDoneAction)
+    public void RunNonBlocking(string selectedSolution, string selectedPlatform, string selectedConfiguration, Action<string> buildLogAction, Action<string> buildDoneAction)
     {
-      ProjectCollection pc = new ProjectCollection();
-      Dictionary<string, string> GlobalProperty = new Dictionary<string, string>();
-      GlobalProperty.Add("Configuration", selectedConfiguration);
-      GlobalProperty.Add("Platform", selectedPlatform);
-
-      BuildRequestData BuildRequest = new BuildRequestData(selectedSolution, 
-                                                           GlobalProperty, 
-                                                           null, 
-                                                           new string[] {"Clean", "Build" }, 
-                                                           null);
       BuildLogger buildLogger = new BuildLogger();
       buildLogger.BuildEvent += buildLogAction;
 
-      var forwardLogger = new ConfigurableForwardingLogger
+      var loggers = new ILogger[]
       {
-        BuildEventRedirector = buildLogger
+        new ConfigurableForwardingLogger
+        {
+          BuildEventRedirector = buildLogger,
+          Verbosity = LoggerVerbosity.Diagnostic
+        },
+        new FileLogger
+        {
+          Verbosity = LoggerVerbosity.Diagnostic,
+          ShowSummary = true
+        }
       };
 
-      BuildParameters buildParameters = new BuildParameters(pc);
-      buildParameters.Loggers = new ILogger[]{ forwardLogger };
+      Dictionary<string, string> globalProperties = new Dictionary<string, string>();
+      globalProperties.Add("Configuration", selectedConfiguration);
+      globalProperties.Add("Platform", selectedPlatform);
+
+      ProjectCollection pc = new ProjectCollection(ToolsetDefinitionLocations.Registry);
+      
+      BuildRequestData buildRequest = new BuildRequestData(selectedSolution, 
+                                                           globalProperties, 
+                                                           null, 
+                                                           new string[] { BuildTarget.Build }, 
+                                                           null);
+
+
+      BuildParameters buildParameters = new BuildParameters(pc) { Loggers = loggers };
       BuildManager.DefaultBuildManager.BeginBuild(buildParameters);
       Console.WriteLine("Build setup complete. starting now");
-      var submission = BuildManager.DefaultBuildManager.PendBuildRequest(BuildRequest);
+      var submission = BuildManager.DefaultBuildManager.PendBuildRequest(buildRequest);
       Console.WriteLine("Build sumitted!");
-      submission.ExecuteAsync(callback,new Action<string>(result => { buildLogAction(result); buildDoneAction(); }));
+      submission.ExecuteAsync(OnBuildComplete, (Action<string>)OnBuildCompleteCallbackAction);
+
+      void OnBuildCompleteCallbackAction(string result)
+      {
+         buildLogAction(result); buildDoneAction(result);
+      }
     }
 
-    private void callback(BuildSubmission submission)
+    private void OnBuildComplete(BuildSubmission submission)
     {
-      if(submission.AsyncContext is Action<string> handler)
+      BuildManager.DefaultBuildManager.EndBuild();
+
+      if (submission.AsyncContext is Action<string> handler)
       {
         handler(Enum.GetName(typeof(BuildResultCode), submission.BuildResult.OverallResult));
       }
-      BuildManager.DefaultBuildManager.EndBuild();
     }
-
-    
   }
 }

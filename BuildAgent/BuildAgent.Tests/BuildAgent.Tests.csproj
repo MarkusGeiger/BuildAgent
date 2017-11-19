@@ -99,6 +99,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="BuildTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App.config" />
@@ -107,6 +108,14 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\BuildAgent.Build.FullFramework\BuildAgent.Build.FullFramework.csproj">
+      <Project>{afdfa86b-f3f4-4ab1-be8d-85a4a6f348e0}</Project>
+      <Name>BuildAgent.Build.FullFramework</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BuildAgent.Build.WPF\BuildAgent.Build.WPF.csproj">
+      <Project>{16aa8e84-3226-4597-84b5-411fb575c5f2}</Project>
+      <Name>BuildAgent.Build.WPF</Name>
+    </ProjectReference>
     <ProjectReference Include="..\BuildAgent\BuildAgent.csproj">
       <Project>{A30CF32D-C194-48D3-B81C-6AAA7C30BDD1}</Project>
       <Name>BuildAgent</Name>
