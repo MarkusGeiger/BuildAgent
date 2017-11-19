@@ -9,6 +9,8 @@ using System.Linq;
 using System.Windows.Threading;
 using System.Threading;
 using System.Windows;
+using Microsoft.Win32;
+using Microsoft.WindowsAPICodePack.Dialogs;
 
 namespace BuildAgent.Build.WPF
 {
@@ -58,15 +60,19 @@ namespace BuildAgent.Build.WPF
         LogText.Add("Looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong");
         LogText.Add("logTeXt");
         SolutionFileList = new ObservableCollection<string>(new[] { "Solution1", "Solution2", "SOlution3" });
+        SelectedSolution = SolutionFileList.First();
       }
       else
       {
         Status = "Wait";
-        _build = new FullFramework.Build(Config.Config.Instance.LastUsedRepo);
-        SolutionFileList = new ObservableCollection<string>(_build.AvailableSolutionFiles);
+        if (Config.Config.Instance.LastUsedRepo != null)
+        {
+          _build = new FullFramework.Build(Config.Config.Instance.LastUsedRepo);
+          SolutionFileList = new ObservableCollection<string>(_build.AvailableSolutionFiles);
+          SelectedSolution = SolutionFileList.First();
+        }
       }
 
-      SelectedSolution = SolutionFileList.First();
       SelectedConfiguration = FullFramework.Build.Configurations.First();
       SelectedPlatform = FullFramework.Build.Platforms.First();
     }
@@ -82,6 +88,24 @@ namespace BuildAgent.Build.WPF
       (_startBuildCommand = new DelegateCommand(OnStartBuild,
         () => SolutionFileList != null && SolutionFileList.Count > 0 && !String.IsNullOrWhiteSpace(SelectedSolution)
         && !String.IsNullOrWhiteSpace(SelectedConfiguration) && !String.IsNullOrWhiteSpace(SelectedPlatform)));
+
+    public ICommand AddRepositoryCommand => _addRepositoryCommand ??
+      (_addRepositoryCommand = new DelegateCommand(OnAddRepository));
+
+    private void OnAddRepository()
+    {
+      CommonOpenFileDialog ofd = new CommonOpenFileDialog();
+      ofd.EnsurePathExists = true;
+      ofd.IsFolderPicker = true;
+      ofd.InitialDirectory = Config.Config.Instance.LastUsedRepo;
+      if(ofd.ShowDialog(Application.Current.MainWindow) == CommonFileDialogResult.Ok)
+      {
+        Config.Config.Instance.LastUsedRepo = ofd.FileName;
+        _build = new FullFramework.Build(Config.Config.Instance.LastUsedRepo);
+        SolutionFileList = new ObservableCollection<string>(_build.AvailableSolutionFiles);
+        SelectedSolution = SolutionFileList.First();
+      }
+    }
 
     private string _selectedSolution;
     public string SelectedSolution
@@ -115,6 +139,7 @@ namespace BuildAgent.Build.WPF
     private string _selectedPlatform;
     private Dispatcher _dispatcher;
     private string _startupDirectory;
+    private DelegateCommand _addRepositoryCommand;
 
     public string SelectedPlatform
     {

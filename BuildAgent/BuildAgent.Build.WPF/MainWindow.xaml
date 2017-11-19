@@ -24,6 +24,7 @@
     <Grid.ColumnDefinitions>
       <ColumnDefinition Width="180"/>
       <ColumnDefinition Width="*"/>
+      <ColumnDefinition Width="48"/>
     </Grid.ColumnDefinitions>
     <TextBlock FontSize="36" 
                Grid.Column="0"
@@ -33,13 +34,19 @@
     <ComboBox Grid.Column="1" 
               HorizontalAlignment="Stretch" 
               Height="48" 
-              FontSize="16" 
+              FontSize="16"
               FontWeight="ExtraLight" 
               SelectedItem="{Binding SelectedSolution, Mode=TwoWay}" 
               ItemsSource="{Binding SolutionFileList}"/>
+    <Button Grid.Row="0"
+            Grid.Column="2"
+            Content="+"
+            FontSize="36"
+            Command="{Binding AddRepositoryCommand}"
+            FontWeight="ExtraLight"/>
     <ListBox Height="48" 
              Grid.Row="1" 
-             Grid.ColumnSpan="2" 
+             Grid.ColumnSpan="3" 
              ItemsSource="{x:Static build:Build.Configurations}" 
              SelectedItem="{Binding SelectedConfiguration}">
       <ListBox.Template>
@@ -51,7 +58,7 @@
     </ListBox>
     <ListBox Height="48" 
              Grid.Row="2" 
-             Grid.ColumnSpan="2" 
+             Grid.ColumnSpan="3" 
              ItemsSource="{x:Static build:Build.Platforms}" 
              SelectedItem="{Binding SelectedPlatform}">
       <ListBox.Template>
@@ -68,17 +75,18 @@
             HorizontalAlignment="Left" 
             VerticalAlignment="Bottom" 
             Grid.Row="4"
-            Grid.ColumnSpan="2"
+            Grid.ColumnSpan="3"
             FontSize="36" 
             Command="{Binding StartBuildCommand}"/>
     <TextBlock FontSize="36" 
                FontWeight="ExtraLight" 
                Grid.Row="4"
-               Grid.ColumnSpan="2"
+               Grid.ColumnSpan="3"
                HorizontalAlignment="Right" 
                Text="{Binding Status}"/>
     <ListBox Grid.Row="3"
-             Grid.ColumnSpan="2"
+             MaxHeight="550"
+             Grid.ColumnSpan="3"
              IsSynchronizedWithCurrentItem="True"
              local:ListBoxExtenders.AutoScrollToCurrentItem="True"
              ScrollViewer.HorizontalScrollBarVisibility="Auto"
